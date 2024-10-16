@@ -1,4 +1,4 @@
-import User from "../models/Users.js"
+import Users from '../models/Users.js'
 import bcrypt from 'bcryptjs'
 import fs from "fs"
 import path from "path"
@@ -9,10 +9,9 @@ const __dirname = path.dirname(__filename)
 
 const changeUserInfo = async (req, res) => {
     try {
-
         // get data
         const userID = req.user.id
-        const updates = req.body
+        const {updates} = req.body
 
         if (req.file) {
             const imagePath = req.file.path.replace('public/', '')
@@ -20,13 +19,9 @@ const changeUserInfo = async (req, res) => {
         }
 
         // update user
-        const updatedUser = await User.findOneAndUpdate(
-            { _id: userID },
-            { $set: updates },
-            { new: true, runValidators: true }
-        ).lean()
+        const updatedUser = await Users.update({id: userID, updates})
 
-        delete updatedUser.password
+        delete updatedUser.user_password
 
         res.status(200).json({
             message: "User info updated successfully",
@@ -34,7 +29,7 @@ const changeUserInfo = async (req, res) => {
         })
     }
     catch (error) {
-        if (error.code == 11000) {
+        if (error.code == '23505') {
             return res.status(400).json({
                 message: 'Username already exists'
             })
@@ -46,14 +41,13 @@ const changeUserInfo = async (req, res) => {
 }
 
 const changePassword = async (req, res) => {
-    console.log(req.body)
     const {oldPassword, newPassword} = req.body
     const userID = req.user.id
 
     try {
-        const user = await User.findById(userID)
+        const user = await Users.findByID({id: userID})
 
-        const passwordMatch = await bcrypt.compare(oldPassword, user.password)
+        const passwordMatch = await bcrypt.compare(oldPassword, user.user_password)
         if (!passwordMatch) {
             return res.status(401).json({ 
                 error: 'Invalid password'
@@ -63,9 +57,7 @@ const changePassword = async (req, res) => {
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-        user.password = hashedPassword
-
-        await user.save()
+        await Users.updatePassword({id: userID, password: hashedPassword})
 
         res.status(200).json({
             message: 'Password changed successfully'
@@ -83,10 +75,10 @@ const deleteUser = async (req, res) => {
     const userID = req.user.id
 
     try {
-        const user = await User.findById(userID)
+        const user = await Users.findByID({id: userID})
 
         // ask for password
-        const passwordMatch = await bcrypt.compare(password, user.password)
+        const passwordMatch = await bcrypt.compare(password, user.user_password)
         if (!passwordMatch) {
             return res.status(401).json({ 
                 error: 'Invalid password'
@@ -108,7 +100,7 @@ const deleteUser = async (req, res) => {
             }
         }
 
-        await user.deleteOne()
+        await Users.delete({id: userID})
 
         res.status(200).json({
             message: 'User deleted successfully'

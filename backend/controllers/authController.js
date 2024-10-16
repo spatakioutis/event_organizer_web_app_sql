@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import User from '../models/Users.js'
+import Users from '../models/Users.js'
 
 const register = async (req, res) => {
-
+    
     try {
         const imagePath = req.file.path.replace('public/', '')
 
@@ -23,7 +23,7 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt)
 
         // create new user
-        const newUser = new User({
+        const newUser = await Users.add({
             username,
             firstName,
             lastName, 
@@ -34,20 +34,17 @@ const register = async (req, res) => {
             phone
         })
 
-        // save new user
-        const savedUser = await newUser.save()
-
         res.status(201).json({
             message: 'User registration successful',
             user: {
-                username:   savedUser.username,
-                firstName:  savedUser.firstName,
-                lastName:   savedUser.lastName,
-                email:      savedUser.email,
-                birthDate:  savedUser.birthDate,
-                profilePic: savedUser.profilePic,
-                phone:      savedUser.phone,
-                _id:        savedUser._id
+                username:   newUser.username,
+                firstName:  newUser.firstName,
+                lastName:   newUser.lastName,
+                email:      newUser.email,
+                birthDate:  newUser.birthDate,
+                profilePic: newUser.profilePic,
+                phone:      newUser.phone,
+                id:         newUser.id
             }
         })
     }
@@ -67,7 +64,7 @@ const login = async (req, res) => {
         } = req.body
 
         // check if user exists
-        const user = await User.findOne({username}).lean()
+        const user = await Users.findByUsername({username})
 
         if ( !user ) {
             return res.status(404).json({
@@ -76,7 +73,7 @@ const login = async (req, res) => {
         }
 
         // check if password is correct
-        const isMatch = await bcrypt.compare(password, user.password)
+        const isMatch = await bcrypt.compare(password, user.user_password)
 
         if ( !isMatch ) {
             return res.status(401).json({
@@ -85,9 +82,9 @@ const login = async (req, res) => {
         }
 
         // return token-user
-        const token = jwt.sign({ id: user._id }, process.env.JWT_KEY)
+        const token = jwt.sign({ id: user.id }, process.env.JWT_KEY)
         
-        delete user.password
+        delete user.user_password
 
         res.status(200).json({
             message: "Login sucessful",

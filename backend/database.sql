@@ -7,8 +7,7 @@ CREATE TABLE Users (
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    birthDate DATE,
-    password VARCHAR(255) NOT NULL,
+    user_password VARCHAR(255) NOT NULL,
     profilePic VARCHAR(255),
     phone VARCHAR(20)
 );
