@@ -13,7 +13,7 @@ import pool from './db.js'
 
 import authRoute from "./routes/authRoute.js"
 import userRoute from "./routes/userRoute.js"
-// // import eventRoute from "./routes/eventRoute.js"
+import eventRoute from "./routes/eventRoute.js"
 // // import bookingRoute from "./routes/bookingRoute.js"
 
 const __filename = fileURLToPath(import.meta.url)
@@ -34,7 +34,7 @@ app.use("/assets", express.static(path.join(__dirname, "public/assets")))
 // // // routes
 app.use('/auth', authRoute)
 app.use('/users', userRoute)
-// // app.use('/events', eventRoute)
+app.use('/events', eventRoute)
 // // app.use('/bookings', bookingRoute)
 
 // // scheduled scannings for database updates
