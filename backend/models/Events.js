@@ -33,19 +33,59 @@ const addEvent = async (eventData) => {
     }
 }
 
-const findEvents = async (id) => {
+const findEventByID = async (id) => {
     try {
-        const res = await pool.query(
-            `SELECT * FROM Events ${id ? 'WHERE id = $1' : ''}`,
-            id ? [id] : []
+        const event = await pool.query(
+            'SELECT * FROM Events WHERE id = $1',
+            [id]
         )
-        return res.rows
+        
+        const eventDates = await pool.query(
+            'SELECT * FROM EventDates WHERE event_id = $1',
+            [id]
+        )
+
+        return {
+            ...event.rows[0],
+            specificDateInfo: eventDates.rows
+        }
+        
     } catch (error) {
         throw error
     }
 }
 
-// Function to update an event
+const findEventsByTitle = async (title) => {
+
+    //here we also search for partial matches because this query will be used for search
+    try {
+        const events = await pool.query(
+            " SELECT * FROM EVENTS WHERE title LIKE $1 ",
+            ['%' + title + '%']
+        )
+
+        let eventsInfo = []
+
+        if ( events.rowCount > 0 ) {
+            eventsInfo = await Promise.all(events.rows.map(async (event) => {
+                const eventDates = await pool.query(
+                    " SELECT * FROM EventDates WHERE event_id = $1",
+                    [event.id]
+                )
+                return {
+                    ...event,
+                    specificDateInfo: eventDates.rows
+                }
+            }))
+        }
+
+        return eventsInfo
+
+    } catch (error) {
+        throw error
+    }
+}
+
 const updateEvent = async ({ id, updates }) => {
     const fields = Object.keys(updates)
     const values = Object.values(updates)
@@ -79,10 +119,9 @@ const deleteEvent = async (id) => {
     }
 }
 
-// Export the functions
 export default {
     add: addEvent,
-    findEvents,
+    findByID: findEventByID,
     updateEvent,
     delete: deleteEvent,
 }
