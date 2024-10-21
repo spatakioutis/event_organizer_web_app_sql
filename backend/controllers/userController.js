@@ -111,4 +111,8 @@ const deleteUser = async (req, res) => {
     }
 }
 
-export { changeUserInfo, changePassword, deleteUser }
+export { 
+    changeUserInfo, 
+    changePassword, 
+    deleteUser 
+}

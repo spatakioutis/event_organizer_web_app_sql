@@ -7,29 +7,24 @@ const register = async (req, res) => {
     try {
         const imagePath = req.file.path.replace('public/', '')
 
-        // destruct body
         const {
             username,
             firstName,
             lastName, 
             password,
             email, 
-            birthDate,
             phone
         } = req.body
 
-        // encode password
         const salt = await bcrypt.genSalt()
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        // create new user
         const newUser = await Users.add({
             username,
             firstName,
             lastName, 
             password: hashedPassword,
             email, 
-            birthDate,
             profilePic: imagePath,
             phone
         })
@@ -90,7 +85,15 @@ const login = async (req, res) => {
 
         res.status(200).json({
             message: "Login sucessful",
-            user,
+            user: {
+                username:   user.username,
+                firstName:  user.firstname,
+                lastName:   user.lastname,
+                email:      user.email,
+                profilePic: user.profilepic,
+                phone:      user.phone,
+                id:         user.user_id
+            },
             token
         })
     }

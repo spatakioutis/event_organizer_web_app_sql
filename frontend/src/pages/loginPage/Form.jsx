@@ -112,6 +112,7 @@ const Form = () => {
                     })
                 )
                 navigate("/home")
+                console.log(loggedIn.user)
             }
         }
         catch(error) {

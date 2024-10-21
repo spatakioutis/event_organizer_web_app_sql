@@ -1,7 +1,7 @@
 import { Box } from "@mui/material"
 
 const UserImage = ({ image, size = "60px" }) => {
-
+    console.log("Image path:", image)
     const imagePath = image.replace('public\\', '')
 
     return (
