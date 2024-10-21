@@ -7,6 +7,7 @@ const addUser = async ({ username, firstName, lastName, email, password, profile
              VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
             [username, firstName, lastName, email, password, profilePic, phone]
         )
+        console.log(res.rows)
         return res.rows[0]
     }
     catch (error) {
@@ -14,12 +15,12 @@ const addUser = async ({ username, firstName, lastName, email, password, profile
     }
 }
 
-const findUserByID = async ({id}) => {
+const findUserByID = async (id) => {
     try {
         const res = await pool.query(
             `SELECT * 
              FROM Users 
-             WHERE id = $1`,
+             WHERE user_id = $1`,
             [id]
         )
         return res.rows[0]
@@ -29,7 +30,7 @@ const findUserByID = async ({id}) => {
     }
 }
 
-const findUserByUsername = async ({username}) => {
+const findUserByUsername = async (username) => {
     try {
         const res = await pool.query(
             `SELECT * 
@@ -52,7 +53,7 @@ const updateUser = async ({id, updates}) => {
     //i dont know wchich fields are being updated beforehand so here i buuild the query dynamically
     const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ')
 
-    const query = `UPDATE Users SET ${setClause} WHERE id = $${fields.length + 1} RETURNING *`
+    const query = `UPDATE Users SET ${setClause} WHERE user_id = $${fields.length + 1} RETURNING *`
 
     values.push(id)
 
@@ -69,11 +70,12 @@ const updateUser = async ({id, updates}) => {
 
 const updatePassword = async ({id, password}) => {
 
+    console.log(id, password)
     try {
-        const res= await pool.query(
+        const res = await pool.query(
             `UPDATE Users
              SET user_password = $1
-             WHERE id = $2 RETURNING *`,
+             WHERE user_id = $2 RETURNING *`,
             [password, id]
         )
         return res.rows[0]
@@ -82,12 +84,12 @@ const updatePassword = async ({id, password}) => {
     }
 }
 
-const deleteUser = async ({id}) => {
+const deleteUser = async (id) => {
     try {
         await pool.query(
             `DELETE 
              FROM Users 
-             WHERE id = $1`,
+             WHERE user_id = $1`,
             [id]
         )
     } catch (error) {

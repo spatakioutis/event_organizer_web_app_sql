@@ -38,17 +38,22 @@ const register = async (req, res) => {
             message: 'User registration successful',
             user: {
                 username:   newUser.username,
-                firstName:  newUser.firstName,
-                lastName:   newUser.lastName,
+                firstName:  newUser.firstname,
+                lastName:   newUser.lastname,
                 email:      newUser.email,
-                birthDate:  newUser.birthDate,
-                profilePic: newUser.profilePic,
+                profilePic: newUser.profilepic,
                 phone:      newUser.phone,
-                id:         newUser.id
+                id:         newUser.user_id
             }
         })
     }
     catch (error) {
+        if (error.code == '23505') {
+            return res.status(400).json({
+                message: 'Username already exists'
+            })
+        }
+
         res.status(500).json({
             message: error.message
         })
@@ -57,14 +62,13 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        // destruct body
+
         const {
             username, 
             password
         } = req.body
 
-        // check if user exists
-        const user = await Users.findByUsername({username})
+        const user = await Users.findByUsername(username)
 
         if ( !user ) {
             return res.status(404).json({
@@ -72,7 +76,6 @@ const login = async (req, res) => {
             })
         }
 
-        // check if password is correct
         const isMatch = await bcrypt.compare(password, user.user_password)
 
         if ( !isMatch ) {
@@ -81,8 +84,7 @@ const login = async (req, res) => {
             })
         }
 
-        // return token-user
-        const token = jwt.sign({ id: user.id }, process.env.JWT_KEY)
+        const token = jwt.sign({ id: user.user_id }, process.env.JWT_KEY)
         
         delete user.user_password
 

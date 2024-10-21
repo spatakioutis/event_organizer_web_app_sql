@@ -12,19 +12,16 @@ const addEvent = async (eventData) => {
 
         const eventID = resEvent.rows[0].id
 
-        console.log(eventID)
-
-        const insertDatePromises = specificDateInfo.map(date => {
+        await Promise.all(specificDateInfo.map(date => {
             return pool.query(
                 `INSERT INTO EventDates (event_id, date, location, seatsAvailable, totalSeats) 
                     VALUES ($1, $2, $3, $4, $5)`,
                 [eventID, date.date, date.location, date.seatsAvailable, date.totalSeats]
             )
-        })
-        await Promise.all(insertDatePromises)
+        }))
 
         return {
-            event: resEvent.rows[0],
+            ...resEvent.rows[0],
             specificDateInfo
         }
     } catch (error) {
@@ -35,20 +32,46 @@ const addEvent = async (eventData) => {
 
 const findEventByID = async (id) => {
     try {
-        const event = await pool.query(
-            'SELECT * FROM Events WHERE id = $1',
-            [id]
-        )
-        
-        const eventDates = await pool.query(
-            'SELECT * FROM EventDates WHERE event_id = $1',
+        const result = await pool.query(
+            `SELECT *
+             FROM Events e
+             INNER JOIN EventDates ed
+             ON e.event_id = ed.event_id
+             WHERE e.event_id = $1`,
             [id]
         )
 
-        return {
-            ...event.rows[0],
-            specificDateInfo: eventDates.rows
-        }
+        if (result.rowCount === 0) {
+            return {}
+        } 
+
+        const eventsFullInfo = result.rows.reduce((acc, row) => {
+           
+            const existingEvent = acc.find(event => event.id === row.event_id)
+
+            const dateInfo = {
+                id: row.event_date_id,
+                date: row.date,
+                location: row.location,
+                totalSeats: row.totalSeats,
+                seatsAvailable: row.seatsAvailable
+            }
+
+            if (existingEvent) {
+                existingEvent.specificDateInfo.push(dateInfo)
+            } else {
+                acc.push({
+                    id: row.id,
+                    title: row.title,
+                    description: row.description,
+                    specificDateInfo: [dateInfo]
+                })
+            }
+
+            return acc
+        }, [])
+
+        return eventsFullInfo[0]
         
     } catch (error) {
         throw error

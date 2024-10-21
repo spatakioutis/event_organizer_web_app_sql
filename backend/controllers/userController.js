@@ -9,7 +9,6 @@ const __dirname = path.dirname(__filename)
 
 const changeUserInfo = async (req, res) => {
     try {
-        // get data
         const userID = req.user.id
         const {updates} = req.body
 
@@ -18,7 +17,6 @@ const changeUserInfo = async (req, res) => {
             updates.profilePic = imagePath
         }
 
-        // update user
         const updatedUser = await Users.update({id: userID, updates})
 
         delete updatedUser.user_password
@@ -45,7 +43,7 @@ const changePassword = async (req, res) => {
     const userID = req.user.id
 
     try {
-        const user = await Users.findByID({id: userID})
+        const user = await Users.findByID(userID)
 
         const passwordMatch = await bcrypt.compare(oldPassword, user.user_password)
         if (!passwordMatch) {
@@ -75,9 +73,8 @@ const deleteUser = async (req, res) => {
     const userID = req.user.id
 
     try {
-        const user = await Users.findByID({id: userID})
+        const user = await Users.findByID(userID)
 
-        // ask for password
         const passwordMatch = await bcrypt.compare(password, user.user_password)
         if (!passwordMatch) {
             return res.status(401).json({ 
@@ -85,22 +82,21 @@ const deleteUser = async (req, res) => {
             })
         }
 
-        // delete user
-        if (user.profilePic) {
+        if (user.profilepic) {
             const filePath = path.join(__dirname, 'public/assets', user.profilePic)
 
             if (fs.existsSync(filePath)) {
                 fs.unlink(filePath, (err) => {
                     if (err) {
-                        console.error('Error deleting file:', err)
+                        console.error('[Server] Error deleting file:', err)
                         return res.status(500).json({ message: 'Error deleting file' })
                     }
-                    console.log('File deleted successfully')
+                    console.log('[Server] File deleted successfully')
                 })
             }
         }
 
-        await Users.delete({id: userID})
+        await Users.delete(userID)
 
         res.status(200).json({
             message: 'User deleted successfully'
