@@ -12,12 +12,14 @@ const changeUserInfo = async (req, res) => {
         const userID = req.user.id
         const {updates} = req.body
 
+        const updatesObj = JSON.parse(updates)
+
         if (req.file) {
             const imagePath = req.file.path.replace('public/', '')
-            updates.profilePic = imagePath
+            updatesObj.profilePic = imagePath
         }
 
-        const updatedUser = await Users.update({id: userID, updates})
+        const updatedUser = await Users.update({id: userID, updates: updatesObj})
 
         delete updatedUser.user_password
 

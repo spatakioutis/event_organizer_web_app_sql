@@ -47,10 +47,11 @@ const findUserByUsername = async (username) => {
 
 const updateUser = async ({id, updates}) => {
 
+    // const updatesObj = JSON.parse(updates)
     const fields = Object.keys(updates)
     const values = Object.values(updates)
 
-    //i dont know wchich fields are being updated beforehand so here i buuild the query dynamically
+    //i dont know wchich fields are being updated beforehand so here i build the query dynamically
     const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ')
 
     const query = `UPDATE Users SET ${setClause} WHERE user_id = $${fields.length + 1} RETURNING *`
