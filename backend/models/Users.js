@@ -99,10 +99,10 @@ const deleteUser = async (id) => {
 }
 
 export default {
-    add: addUser,
-    findByID: findUserByID,
+    add:            addUser,
+    findByID:       findUserByID,
     findByUsername: findUserByUsername,
-    update: updateUser,
+    update:         updateUser,
     updatePassword,
-    delete: deleteUser
+    delete:         deleteUser
 }
