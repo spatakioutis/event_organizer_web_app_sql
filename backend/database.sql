@@ -39,10 +39,8 @@ CREATE TABLE EventDates (
 CREATE TABLE Bookings (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    event_id INT NOT NULL,
-    bookingDate DATE NOT NULL, 
+    event_date_id INT NOT NULL, 
     numOfTickets INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES Events(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
-

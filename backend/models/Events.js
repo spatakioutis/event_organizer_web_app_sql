@@ -47,7 +47,7 @@ const addEvent = async (eventData) => {
             [title, 'upcoming', type, host, duration, image, description, ticketPrice]
         )
 
-        const eventID = resEvent.rows[0].id
+        const eventID = resEvent.rows[0].event_id
 
         await Promise.all(specificDateInfo.map(date => {
             return pool.query(
@@ -178,20 +178,38 @@ const updateEvent = async ({ id, updates }) => {
     values.push(id)
 
     try {
-        const res = await pool.query(query, values)
-        return res.rows[0]
+        const result = await pool.query(query, values)
+        return result.rows[0]
     } catch (error) {
+        throw error
+    }
+}
+
+const updateSeatCount = async ({id, date, amount}) => {
+
+    try {
+        const result = await pool.query(
+            `UPDATE EventDates
+             SET seatsavailable = seatsavailable - $1
+             WHERE event_id = $2 AND date = $3
+             RETURNING *`,
+             [amount, id, date]
+        )
+
+        return result.rows[0]
+    }
+    catch (error) {
         throw error
     }
 }
 
 const deleteEvent = async (id) => {
     try {
-        const res = await pool.query(
+        const result = await pool.query(
             `DELETE FROM Events WHERE event_id = $1 RETURNING *`,
             [id]
         )
-        return res.rows[0]
+        return result.rows[0]
     } catch (error) {
         throw error
     }
@@ -205,5 +223,6 @@ export default {
     findByHost:   findEventsByHost,
     findByNewest: findEventsByNewest,
     update:       updateEvent,
+    updateSeatCount,
     delete:       deleteEvent,
 }

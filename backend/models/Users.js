@@ -71,7 +71,6 @@ const updateUser = async ({id, updates}) => {
 
 const updatePassword = async ({id, password}) => {
 
-    console.log(id, password)
     try {
         const res = await pool.query(
             `UPDATE Users
