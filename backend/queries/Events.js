@@ -185,15 +185,31 @@ const updateEvent = async ({ id, updates }) => {
     }
 }
 
-const updateSeatCount = async ({id, date, amount}) => {
+const findEventDateInfo = async ({eventID, date}) => {
+    try {
+        const result = await pool.query(
+            `SELECT *
+             FROM EventDates
+             WHERE event_id = $1 AND date = $2`,
+             [eventID, date]
+        )
+
+        return result.rows[0]
+    }
+    catch (error) {
+        throw error
+    }
+}
+
+const updateSeatCount = async ({eventDateID, amount}) => {
 
     try {
         const result = await pool.query(
             `UPDATE EventDates
-             SET seatsavailable = seatsavailable - $1
-             WHERE event_id = $2 AND date = $3
+             SET seatsavailable = seatsavailable + $1
+             WHERE event_dates_id = $2
              RETURNING *`,
-             [amount, id, date]
+             [amount, eventDateID]
         )
 
         return result.rows[0]
@@ -222,6 +238,7 @@ export default {
     findByType:   findEventsByType,
     findByHost:   findEventsByHost,
     findByNewest: findEventsByNewest,
+    findDateInfo: findEventDateInfo,
     update:       updateEvent,
     updateSeatCount,
     delete:       deleteEvent,

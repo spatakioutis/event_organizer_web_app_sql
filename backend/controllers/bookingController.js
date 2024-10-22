@@ -13,10 +13,14 @@ const createBooking = async (req, res) => {
 
         const targetDate = new Date(date).toISOString()
 
-        const eventDateInfo = await Events.updateSeatCount({
-            id: eventID, 
+        const eventDateInfo = await Events.findDateInfo({
+            eventID, 
             date: targetDate, 
-            amount: numOfTickets
+        })
+
+        await Events.updateSeatCount({
+            eventDateID: eventDateInfo.event_dates_id, 
+            amount: -numOfTickets
         })
 
         const newBooking = await Bookings.add({
@@ -60,6 +64,11 @@ const deleteBooking = async (req, res) => {
                 message: 'Booking does not belong to the user'
             })
         }
+
+        await Events.updateSeatCount({
+            eventDateID: booking.event_date_id,  
+            amount: booking.numoftickets
+        })
 
         await Bookings.delete(bookingID)
 
