@@ -92,7 +92,7 @@ const login = async (req, res) => {
                 email:      user.email,
                 profilePic: user.profilepic,
                 phone:      user.phone,
-                id:         user.user_id
+                _id:         user.user_id
             },
             token
         })

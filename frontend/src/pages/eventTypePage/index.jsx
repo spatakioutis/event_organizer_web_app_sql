@@ -39,7 +39,7 @@ const EventTypePage = () => {
                 } 
             }
             catch (error) {
-                console.error("Erro fetching events of type: " + type , error)
+                console.error("Error fetching events of type: " + type , error)
             }
         }
         fetchEvents()
@@ -77,7 +77,6 @@ const EventTypePage = () => {
                     fontSize="2.5rem"
                     letterSpacing="2px"
                     fontFamily="'Raleway', sans-serif"
-                    textShadow="1px 1px 2px rgba(0, 0, 0, 0.1)"
                 >
                     {type}
                 </Typography>

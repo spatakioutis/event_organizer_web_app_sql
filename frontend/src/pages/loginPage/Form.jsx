@@ -23,7 +23,7 @@ const registerSchema = yup.object().shape({
     username: yup.string().required("Username is required"),
     password: yup.string().required("Password is required"),
     email: yup.string().email("Must be a valid email").required("Email is required"),
-    birthDate: yup.string().required("Birth date is required"),
+    // birthDate: yup.string().required("Birth date is required"),
     profilePic: yup.string(),
     phone: yup.string().required("Phone is required")
 })
@@ -40,7 +40,7 @@ const initialValuesRegister = {
     username: "",
     password: "",
     email: "",
-    birthDate: "",
+    // birthDate: "",
     profilePic: "",
     phone: ""
 }
@@ -112,7 +112,6 @@ const Form = () => {
                     })
                 )
                 navigate("/home")
-                console.log(loggedIn.user)
             }
         }
         catch(error) {
@@ -193,7 +192,7 @@ const Form = () => {
                                         helperText={touched.phone && errors.phone}
                                         sx={{ gridColumn: "span 2" }}
                                     />
-                                    <TextField 
+                                    {/* <TextField 
                                         label="Birth Date"  
                                         type="date"
                                         onBlur={handleBlur}
@@ -210,7 +209,7 @@ const Form = () => {
                                         InputLabelProps={{
                                             shrink: true
                                         }}
-                                    />
+                                    /> */}
                                     <TextField 
                                         label="Email"
                                         onBlur={handleBlur}

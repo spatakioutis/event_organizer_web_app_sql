@@ -27,7 +27,7 @@ const structureFullEventsInfo = (data) => {
                 host: row.host,
                 duration: row.duration, 
                 image: row.image,
-                ticketPrice: row.ticketPrice,
+                ticketPrice: row.ticketprice,
                 description: row.description,
                 specificDateInfo: [dateInfo]
             })
@@ -156,7 +156,7 @@ const findEventsByTitle = async (title) => {
              FROM Events e
              INNER JOIN EventDates ed
              ON e.event_id = ed.event_id
-             WHERE title LIKE $1 AND ed.date >= NOW()
+             WHERE LOWER(e.title) LIKE LOWER($1) AND ed.date >= NOW()
              ORDER BY e.created_at DESC`,
             ['%' + title + '%']
         )

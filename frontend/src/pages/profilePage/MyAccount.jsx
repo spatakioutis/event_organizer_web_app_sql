@@ -20,7 +20,6 @@ const validationSchema = yup.object().shape({
     lastName: yup.string().required("Last name is required"),
     username: yup.string().required("Username is required"),
     email: yup.string().email("Must be a valid email").required("Email is required"),
-    birthDate: yup.string().required("Birth date is required"),
     phone: yup.string().required("Phone is required")
 })
 
@@ -37,11 +36,12 @@ const MyAccount = () => {
         lastName: user.lastName,
         username: user.username,
         email: user.email,
-        birthDate: user.birthDate,
         phone: user.phone
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
+
+        console.log("Form Submitted:", values);
         const formData = new FormData()
         for (let key in values) {
             if (key === "profilePic" && values.profilePic) {
@@ -69,7 +69,6 @@ const MyAccount = () => {
                 lastName: update.user.lastName,
                 username: update.user.username,
                 email: update.user.email,
-                birthDate: update.user.birthDate,
                 phone: update.user.phone
             }})
             setErrorMessage("")

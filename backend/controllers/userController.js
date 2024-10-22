@@ -10,22 +10,32 @@ const __dirname = path.dirname(__filename)
 const changeUserInfo = async (req, res) => {
     try {
         const userID = req.user.id
-        const {updates} = req.body
+        const updates = req.body
 
-        const updatesObj = JSON.parse(updates)
+        console.log(updates)
+
+        // const updatesObj = JSON.parse(updates)
 
         if (req.file) {
             const imagePath = req.file.path.replace('public/', '')
-            updatesObj.profilePic = imagePath
+            updates.profilePic = imagePath
         }
 
-        const updatedUser = await Users.update({id: userID, updates: updatesObj})
+        const updatedUser = await Users.update({id: userID, updates: updates})
 
         delete updatedUser.user_password
 
         res.status(200).json({
             message: "User info updated successfully",
-            user: updatedUser
+            user: {
+                username:   updatedUser.username,
+                firstName:  updatedUser.firstname,
+                lastName:   updatedUser.lastname,
+                email:      updatedUser.email,
+                profilePic: updatedUser.profilepic,
+                phone:      updatedUser.phone,
+                _id:         updatedUser.user_id
+            }
         })
     }
     catch (error) {
@@ -85,7 +95,7 @@ const deleteUser = async (req, res) => {
         }
 
         if (user.profilepic) {
-            const filePath = path.join(__dirname, 'public/assets', user.profilePic)
+            const filePath = path.join(__dirname, 'public/assets', user.profilepic)
 
             if (fs.existsSync(filePath)) {
                 fs.unlink(filePath, (err) => {

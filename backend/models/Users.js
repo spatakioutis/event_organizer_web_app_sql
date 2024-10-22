@@ -64,6 +64,7 @@ const updateUser = async ({id, updates}) => {
             values
         )
         return res.rows[0]
+
     } catch (error) {
         throw error
     }
