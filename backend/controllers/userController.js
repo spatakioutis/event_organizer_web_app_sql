@@ -12,10 +12,6 @@ const changeUserInfo = async (req, res) => {
         const userID = req.user.id
         const updates = req.body
 
-        console.log(updates)
-
-        // const updatesObj = JSON.parse(updates)
-
         if (req.file) {
             const imagePath = req.file.path.replace('public/', '')
             updates.profilePic = imagePath

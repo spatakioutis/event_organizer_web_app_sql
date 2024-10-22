@@ -41,7 +41,6 @@ const MyAccount = () => {
 
     const handleFormSubmit = async (values, onSubmitProps) => {
 
-        console.log("Form Submitted:", values);
         const formData = new FormData()
         for (let key in values) {
             if (key === "profilePic" && values.profilePic) {
