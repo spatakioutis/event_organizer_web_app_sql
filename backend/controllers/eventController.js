@@ -1,5 +1,5 @@
-import Events from '../models/Events.js'
-import Users from '../models/Users.js'
+import Events from '../queries/Events.js'
+import Users from '../queries/Users.js'
 import fs from "fs"
 import path from "path"
 import { fileURLToPath } from 'url'

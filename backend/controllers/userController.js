@@ -1,4 +1,4 @@
-import Users from '../models/Users.js'
+import Users from '../queries/Users.js'
 import bcrypt from 'bcryptjs'
 import fs from "fs"
 import path from "path"

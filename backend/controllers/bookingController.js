@@ -1,5 +1,5 @@
-import Bookings from "../models/Bookings.js"
-import Events from "../models/Events.js"
+import Bookings from "../queries/Bookings.js"
+import Events from "../queries/Events.js"
 
 const createBooking = async (req, res) => {
     try {
