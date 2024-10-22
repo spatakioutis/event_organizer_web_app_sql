@@ -7,7 +7,7 @@ import morgan from "morgan"
 import path from "path"
 import { fileURLToPath } from "url"
 
-// // import { updateEventStatus } from "./scheduledTaskManager.js"
+import { updateEventStatus } from "./scheduledTaskManager.js"
 
 import authRoute from "./routes/authRoute.js"
 import userRoute from "./routes/userRoute.js"
@@ -35,8 +35,8 @@ app.use('/users', userRoute)
 app.use('/events', eventRoute)
 app.use('/bookings', bookingRoute)
 
-// // scheduled scannings for database updates
-// // setInterval(updateEventStatus, 24 * 60 * 60 * 1000)
+// scheduled scannings for database updates
+setInterval(updateEventStatus,  24 * 60 * 60 * 1000)
 
 const PORT = process.env.PORT || 6001
 

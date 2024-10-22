@@ -7,7 +7,6 @@ const addUser = async ({ username, firstName, lastName, email, password, profile
              VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
             [username, firstName, lastName, email, password, profilePic, phone]
         )
-        console.log(res.rows)
         return res.rows[0]
     }
     catch (error) {

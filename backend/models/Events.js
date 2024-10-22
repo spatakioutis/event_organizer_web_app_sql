@@ -135,7 +135,7 @@ const findEventsByHost = async (hostID) => {
              FROM Events e
              INNER JOIN EventDates ed
              ON e.event_id = ed.event_id
-             WHERE e.host = $1 AND ed.date >= NOW()
+             WHERE e.host = $1
              ORDER BY e.created_at DESC`,
              [hostID]
         )
